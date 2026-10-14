@@ -6,9 +6,9 @@ $TRACER = if ($env:TRACER) { $env:TRACER } else { "http://localhost:8000" }
 $RK = if ($env:RK) { $env:RK } else { "rk" }
 $AK = if ($env:AK) { $env:AK } else { "ak" }
 
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "==========================================================="
 Write-Host "  LeakTrace Demo (PowerShell)"
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "==========================================================="
 
 Write-Host "`nStep 1: Register canary tokens"
 Invoke-RestMethod -Uri "$ERP/admin/register-canaries" -Method POST -Headers @{ "x-admin-key" = $AK } | ConvertTo-Json
@@ -41,6 +41,6 @@ Invoke-RestMethod -Uri "$TRACER/investigate" -Method POST -Headers @{ "Content-T
 Write-Host "`nStep 7: Reveal identities (custodian)"
 Invoke-RestMethod -Uri "$ERP/custodian/reveal" -Headers @{ "x-admin-key" = $AK } | ConvertTo-Json
 
-Write-Host "`n═══════════════════════════════════════════════════════════"
+Write-Host "`n==========================================================="
 Write-Host "  Demo complete! Open the dashboard to visualize results."
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "==========================================================="

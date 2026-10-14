@@ -9,7 +9,7 @@ import os
 import psycopg
 from psycopg.rows import dict_row
 
-DSN = os.environ["DATABASE_URL"]
+DSN = os.environ.get("DATABASE_URL", "postgresql://postgres:1234@localhost:5432/leaktrace")
 
 
 def get_connection():

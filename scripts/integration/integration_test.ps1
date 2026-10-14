@@ -7,9 +7,9 @@ $RK = if ($env:RK) { $env:RK } else { "rk" }
 $IK = if ($env:IK) { $env:IK } else { "ik" }
 $AK = if ($env:AK) { $env:AK } else { "ak" }
 
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "==========================================================="
 Write-Host "  LeakTrace Integration Test (PowerShell)"
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "==========================================================="
 
 Write-Host "`n1. Tracer health..."
 Invoke-RestMethod -Uri "$TRACER/health" | ConvertTo-Json
@@ -62,6 +62,6 @@ Invoke-RestMethod -Uri "$TRACER/investigate" -Method POST -Headers @{ "Content-T
 Write-Host "`n11. Custodian reveal..."
 Invoke-RestMethod -Uri "$ERP/custodian/reveal" -Headers @{ "x-admin-key" = $AK } | ConvertTo-Json
 
-Write-Host "`n═══════════════════════════════════════════════════════════"
-Write-Host "  All checks passed ✓"
-Write-Host "═══════════════════════════════════════════════════════════"
+Write-Host "`n==========================================================="
+Write-Host "  All checks passed [OK]"
+Write-Host "==========================================================="

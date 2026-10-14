@@ -25,7 +25,7 @@ def digest(row: dict, prev_hash: str) -> str:
     hash_n = SHA256( body + hash_(n-1) )
     """
     body = json.dumps(
-        {k: row[k] for k in FIELDS},
+        {k: str(row[k]) if k == "event_id" and row[k] is not None else row[k] for k in FIELDS},
         sort_keys=True,
         separators=(",", ":")
     )
