@@ -25,6 +25,7 @@ export class LeakTraceClient {
    */
   async healthTracer() {
     const res = await fetch(`${this.tracerUrl}/health`);
+    if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
     return res.json();
   }
 
@@ -84,10 +85,51 @@ export class LeakTraceClient {
   }
 
   /**
+   * ERP demo routes — data access includes the prototype x-user-id header.
+   */
+  async readStudent(id, userId) {
+    return this.erpRequest(`/students/${encodeURIComponent(id)}`, userId);
+  }
+
+  async readFees(id, userId) {
+    return this.erpRequest(`/fees/${encodeURIComponent(id)}`, userId);
+  }
+
+  async exportRecord(id, userId) {
+    return this.erpRequest(`/export/${encodeURIComponent(id)}`, userId, "POST");
+  }
+
+  async simulateLeak(id) {
+    return this.erpRequest(`/leak/${encodeURIComponent(id)}`, null, "POST");
+  }
+
+  async registerCanaries() {
+    const res = await fetch(`${this.erpUrl}/admin/register-canaries`, {
+      method: "POST",
+      headers: { "x-admin-key": this.adminKey },
+    });
+    if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+    const result = await res.json();
+    if (result.tracer_status !== 200) {
+      throw new Error(`Tracer rejected canary registration (${result.tracer_status})`);
+    }
+    return result;
+  }
+
+  async erpRequest(path, userId, method = "GET") {
+    const headers = {};
+    if (userId) headers["x-user-id"] = userId;
+    const res = await fetch(`${this.erpUrl}${path}`, { method, headers });
+    if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+    return res.json();
+  }
+
+  /**
    * GET /health — ERP health check, no key required
    */
   async healthErp() {
     const res = await fetch(`${this.erpUrl}/health`);
+    if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
     return res.json();
   }
 }

@@ -23,8 +23,17 @@ app.use((req, res, next) => {
 const STUDENTS = {
   S1001: { name: 'Asha Verma', email: 'asha@example.edu', cgpa: 8.4 },
   S1002: { name: 'Rohan Das', email: 'rohan@example.edu', cgpa: 7.9 },
+  S1003: { name: 'Maya Patel', email: 'maya@example.edu', cgpa: 3.81 },
+  S1004: { name: 'Leo Kim', email: 'leo@example.edu', cgpa: 3.28 },
+  S1005: { name: 'Nia Johnson', email: 'nia@example.edu', cgpa: 3.64 },
 };
-const FEES = { S1001: { due: 12000, paid: 12000 }, S1002: { due: 12000, paid: 6000 } };
+const FEES = {
+  S1001: { due: 12000, paid: 12000 },
+  S1002: { due: 12000, paid: 6000 },
+  S1003: { due: 11800, paid: 8000 },
+  S1004: { due: 13200, paid: 13200 },
+  S1005: { due: 10500, paid: 7000 },
+};
 const USERS = ['clerk01', 'dean01', 'intern01'];
 const SERVICES = ['svc_students', 'svc_fees', 'svc_export'];
 

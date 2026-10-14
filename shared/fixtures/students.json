@@ -14,5 +14,29 @@
     "year": 2,
     "gpa": 3.45,
     "note_ref": null
+  },
+  "S1003": {
+    "id": "S1003",
+    "name": "Maya Patel",
+    "programme": "BSc Biology",
+    "year": 1,
+    "gpa": 3.81,
+    "note_ref": null
+  },
+  "S1004": {
+    "id": "S1004",
+    "name": "Leo Kim",
+    "programme": "BEng Electrical Engineering",
+    "year": 4,
+    "gpa": 3.28,
+    "note_ref": null
+  },
+  "S1005": {
+    "id": "S1005",
+    "name": "Nia Johnson",
+    "programme": "BA History",
+    "year": 2,
+    "gpa": 3.64,
+    "note_ref": null
   }
 }

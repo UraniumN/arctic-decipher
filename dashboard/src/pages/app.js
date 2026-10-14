@@ -43,6 +43,23 @@ const els = {
   revealResult: $("reveal-result"),
 };
 
+const pendingInvestigation = window.localStorage.getItem("leaktrace.pending-investigation");
+if (pendingInvestigation) {
+  try {
+    const details = JSON.parse(pendingInvestigation);
+    if (!details.dataId || !details.exposure || !details.leakedText) {
+      throw new Error("Saved leak details are incomplete");
+    }
+    els.dataId.value = details.dataId;
+    els.exposure.value = details.exposure;
+    els.leakedText.value = details.leakedText;
+    window.localStorage.removeItem("leaktrace.pending-investigation");
+  } catch (error) {
+    console.error("Unable to load saved leak details", error);
+    toast("Could not load saved leak details. Enter the record information manually.", "error");
+  }
+}
+
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
 function toast(message, type = "info") {
@@ -83,17 +100,25 @@ async function connect() {
     toast("Tracer URL and Read Key are required", "error");
     return;
   }
+  if (!config.erpUrl) {
+    toast("ERP URL is required", "error");
+    return;
+  }
 
   client.configure(config);
   setStatus("checking", "Connecting...");
   setLoading(els.btnConnect, true);
 
   try {
-    // Test tracer health
-    await client.healthTracer();
-
-    // Test database connectivity
-    await client.healthDb();
+    // Verify both services before enabling their dashboard actions.
+    const [tracerHealth, databaseHealth, erpHealth] = await Promise.all([
+      client.healthTracer(),
+      client.healthDb(),
+      client.healthErp(),
+    ]);
+    if (!tracerHealth.ok || databaseHealth.db !== "ok" || !erpHealth.ok) {
+      throw new Error("Tracer, database, or ERP health check failed");
+    }
 
     connected = true;
     setStatus("online", "Connected");
@@ -116,6 +141,9 @@ async function connect() {
     connected = false;
     setStatus("offline", "Connection failed");
     toast(`Connection failed: ${err.message}`, "error");
+    els.btnInvestigate.disabled = true;
+    els.btnVerify.disabled = true;
+    els.btnReveal.disabled = true;
   } finally {
     setLoading(els.btnConnect, false);
   }

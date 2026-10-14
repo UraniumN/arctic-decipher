@@ -136,6 +136,29 @@ body {
   color: var(--text-secondary);
 }
 
+.app-nav {
+  display: flex;
+  gap: 0.4rem;
+  margin-right: 0.75rem;
+}
+
+.app-nav-link {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.app-nav-link:hover,
+.app-nav-link-active {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  background: var(--bg-card);
+}
+
 .status-dot {
   width: 8px;
   height: 8px;
@@ -234,7 +257,8 @@ body {
 }
 
 .config-field input,
-.config-field textarea {
+.config-field textarea,
+.config-field select {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   padding: 0.6rem 0.85rem;
@@ -247,7 +271,8 @@ body {
 }
 
 .config-field input:focus,
-.config-field textarea:focus {
+.config-field textarea:focus,
+.config-field select:focus {
   border-color: var(--accent-indigo);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
@@ -255,6 +280,36 @@ body {
 .config-field textarea {
   resize: vertical;
   min-height: 80px;
+}
+
+.erp-demo-intro {
+  margin: -0.5rem 0 1rem;
+}
+
+.erp-demo-actions {
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.erp-demo-output {
+  max-height: 240px;
+  overflow: auto;
+  padding: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font: 0.8rem/1.55 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.erp-result-title {
+  margin: 1.25rem 0 0.65rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .config-actions {
@@ -666,6 +721,15 @@ body {
 @media (max-width: 768px) {
   .header {
     padding: 1rem;
+  }
+
+  .header-status {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .app-nav {
+    margin-right: 0;
   }
 
   .main {

@@ -4,7 +4,7 @@
 > **Directory:** `dashboard/`  
 > **Tech:** Vanilla JavaScript (ES modules), HTML5 Canvas, CSS3, Vite
 
-The **Dashboard** is the investigator's visual cockpit. It connects directly to the Tracer and ERP via HTTP, renders interactive provenance DAG graphs, illustrates inferred log gap paths, shows suspect ranking likelihoods, and reveals custodian identities.
+The dashboard app contains two separate pages: the **investigation dashboard** and the **ERP demo dashboard**. The investigation page focuses on tracer reports; the ERP demo page is used to read/export records and simulate demo activity.
 
 ---
 
@@ -15,6 +15,17 @@ The **Dashboard** is the investigator's visual cockpit. It connects directly to 
 - **Leak Inspector:** Paste any leaked JSON payload or sample; automatically scans for embedded canary tokens.
 - **Chain Integrity Monitor:** Real-time tamper verification detecting missing events, hash edits, and tail truncations.
 - **Custodian Identity Reveal:** Toggle between pseudonym tokens (`p_...`) and real identities when supplied with the `ADMIN_KEY`.
+The ERP demo has its own page at `/erp.html`, linked from the navigation bar. The investigation page remains at `/`.
+
+## Demo workflow
+
+1. In the ERP Demo page, connect to the ERP and provide the admin key.
+2. Choose a demo user and student ID (`S1001`–`S1005`).
+3. Register canary tokens after starting or resetting the tracer.
+4. Read a record, export it, or simulate a leak.
+5. Open the separate investigation dashboard; the simulated leak's record ID and content are filled in automatically. Connect there with the tracer read key and run the investigation.
+
+The dashboard expects the ERP API on port `3001` and tracer on port `8000` for local development. The local mock tracer returns a sample investigation report rather than calculating a ranking from ingested events.
 
 ---
 

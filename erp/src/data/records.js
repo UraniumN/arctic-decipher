@@ -1,7 +1,7 @@
 /**
  * In-memory student and fee records for the demo.
  *
- * Matches the contract's demo data IDs: S1001, S1002
+ * Demo-only student and fee records.
  */
 
 const students = {
@@ -21,6 +21,30 @@ const students = {
     gpa: 3.45,
     note_ref: null,
   },
+  S1003: {
+    id: "S1003",
+    name: "Maya Patel",
+    programme: "BSc Biology",
+    year: 1,
+    gpa: 3.81,
+    note_ref: null,
+  },
+  S1004: {
+    id: "S1004",
+    name: "Leo Kim",
+    programme: "BEng Electrical Engineering",
+    year: 4,
+    gpa: 3.28,
+    note_ref: null,
+  },
+  S1005: {
+    id: "S1005",
+    name: "Nia Johnson",
+    programme: "BA History",
+    year: 2,
+    gpa: 3.64,
+    note_ref: null,
+  },
 };
 
 const fees = {
@@ -36,6 +60,27 @@ const fees = {
     tuition: 11000,
     paid: 11000,
     balance: 0,
+    note_ref: null,
+  },
+  S1003: {
+    id: "S1003",
+    tuition: 11800,
+    paid: 8000,
+    balance: 3800,
+    note_ref: null,
+  },
+  S1004: {
+    id: "S1004",
+    tuition: 13200,
+    paid: 13200,
+    balance: 0,
+    note_ref: null,
+  },
+  S1005: {
+    id: "S1005",
+    tuition: 10500,
+    paid: 7000,
+    balance: 3500,
     note_ref: null,
   },
 };

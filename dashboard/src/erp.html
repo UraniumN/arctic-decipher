@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LeakTrace demo ERP for student and fee records" />
+  <title>LeakTrace — ERP Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-brand">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="12" stroke="url(#grad)" stroke-width="2.5" fill="none"/>
+            <path d="M10 10 L14 18 L18 10" stroke="url(#grad)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs><linearGradient id="grad" x1="0" y1="0" x2="28" y2="28"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
+          </svg>
+        </div>
+        <h1 class="header-title">LeakTrace</h1>
+        <span class="header-badge">ERP Demo</span>
+      </div>
+      <div class="header-status">
+        <nav class="app-nav" aria-label="Dashboards">
+          <a class="app-nav-link" href="/">Investigation</a>
+          <a class="app-nav-link app-nav-link-active" href="/erp.html">ERP Demo</a>
+        </nav>
+        <div id="erp-status-indicator" class="status-dot offline"></div>
+        <span id="erp-status-text">Disconnected</span>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel config-panel">
+        <h2 class="panel-title">ERP Connection</h2>
+        <p class="muted erp-demo-intro">Connect to the demo ERP API. The admin key is only needed to register canaries or reveal demo identities.</p>
+        <div class="config-grid">
+          <div class="config-field">
+            <label for="erp-url">ERP URL</label>
+            <input id="erp-url" type="text" value="http://localhost:3001" />
+          </div>
+          <div class="config-field">
+            <label for="admin-key">Admin Key</label>
+            <input id="admin-key" type="password" placeholder="x-admin-key (optional)" />
+          </div>
+        </div>
+        <div class="config-actions">
+          <button id="btn-erp-connect" class="btn btn-primary">Connect to ERP</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Student and Fee Records</h2>
+        <p class="muted erp-demo-intro">Choose an acting demo user and student record, then read the records or export a combined copy.</p>
+        <div class="investigate-grid">
+          <div class="config-field">
+            <label for="erp-user-id">Acting user</label>
+            <select id="erp-user-id">
+              <option value="clerk01">clerk01</option>
+              <option value="dean01">dean01</option>
+              <option value="intern01">intern01</option>
+            </select>
+          </div>
+          <div class="config-field">
+            <label for="erp-record-id">Student record</label>
+            <select id="erp-record-id">
+              <option value="S1001">S1001 — Alice Nguyen</option>
+              <option value="S1002">S1002 — Bob Martinez</option>
+              <option value="S1003">S1003 — Maya Patel</option>
+              <option value="S1004">S1004 — Leo Kim</option>
+              <option value="S1005">S1005 — Nia Johnson</option>
+            </select>
+          </div>
+        </div>
+        <div class="config-actions erp-demo-actions">
+          <button id="btn-read-student" class="btn btn-secondary" disabled>Read Student</button>
+          <button id="btn-read-fees" class="btn btn-secondary" disabled>Read Fees</button>
+          <button id="btn-export-record" class="btn btn-secondary" disabled>Export Record</button>
+          <button id="btn-simulate-leak" class="btn btn-primary" disabled>Simulate Leak</button>
+        </div>
+        <h3 class="erp-result-title">ERP Response</h3>
+        <pre id="erp-demo-output" class="erp-demo-output" aria-live="polite">Connect to the ERP to start.</pre>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Investigation Setup</h2>
+        <p class="muted erp-demo-intro">Register canaries once after the tracer starts. A simulated leak saves the record and its ID for the separate investigation dashboard.</p>
+        <div class="config-actions erp-demo-actions">
+          <button id="btn-register-canaries" class="btn btn-secondary" disabled>Register Canary Tokens</button>
+          <a class="btn btn-primary" href="/">Open Investigation Dashboard</a>
+        </div>
+      </section>
+
+      <section class="panel reveal-panel" id="reveal-panel">
+        <h2 class="panel-title">Custodian Reveal</h2>
+        <div class="config-actions">
+          <button id="btn-reveal" class="btn btn-warning" disabled>Reveal Demo Identities</button>
+        </div>
+        <div id="reveal-result" class="reveal-result">
+          <p class="muted">Connect and enter the admin key to reveal pseudonyms.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="pages/erp.js"></script>
+</body>
+</html>

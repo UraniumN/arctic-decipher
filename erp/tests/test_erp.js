@@ -66,6 +66,12 @@ test("tokens are unique", () => {
   assert(tokens.size > 90, "Expected mostly unique tokens");
 });
 
+test("service canary tokens are stable and distinct", () => {
+  const exportToken = generateCanaryToken("svc_export");
+  assert.strictEqual(exportToken, generateCanaryToken("svc_export"));
+  assert.notStrictEqual(exportToken, generateCanaryToken("svc_fees"));
+});
+
 // Test records
 const { getStudentRecord, getFeeRecord, getExportRecord } = require("../src/data/records");
 
@@ -76,6 +82,19 @@ test("getStudentRecord returns S1001", () => {
   assert(r, "Expected record");
   assert.strictEqual(r.id, "S1001");
   assert.strictEqual(r.name, "Alice Nguyen");
+});
+
+test("demo records include S1003 through S1005 with fee data", () => {
+  for (const id of ["S1003", "S1004", "S1005"]) {
+    const student = getStudentRecord(id);
+    const fee = getFeeRecord(id);
+    const exportRecord = getExportRecord(id);
+    assert(student, `Expected student ${id}`);
+    assert(fee, `Expected fee record ${id}`);
+    assert(exportRecord, `Expected export record ${id}`);
+    assert.strictEqual(exportRecord.id, id);
+    assert.strictEqual(exportRecord.fees.balance, fee.balance);
+  }
 });
 
 test("getStudentRecord returns null for unknown", () => {

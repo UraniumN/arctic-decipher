@@ -26,6 +26,10 @@
         <span class="header-badge">Investigation Dashboard</span>
       </div>
       <div class="header-status">
+        <nav class="app-nav" aria-label="Dashboards">
+          <a class="app-nav-link app-nav-link-active" href="/">Investigation</a>
+          <a class="app-nav-link" href="/erp.html">ERP Demo</a>
+        </nav>
         <div id="status-indicator" class="status-dot offline"></div>
         <span id="status-text">Disconnected</span>
       </div>
@@ -71,7 +75,14 @@
         <div class="investigate-grid">
           <div class="config-field">
             <label for="data-id">Data ID</label>
-            <input type="text" id="data-id" placeholder="S1001" value="S1001" />
+            <input type="text" id="data-id" placeholder="S1001" value="S1001" list="student-id-options" />
+            <datalist id="student-id-options">
+              <option value="S1001">Alice Nguyen</option>
+              <option value="S1002">Bob Martinez</option>
+              <option value="S1003">Maya Patel</option>
+              <option value="S1004">Leo Kim</option>
+              <option value="S1005">Nia Johnson</option>
+            </datalist>
           </div>
           <div class="config-field">
             <label for="exposure">Exposure Node</label>

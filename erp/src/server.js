@@ -136,7 +136,7 @@ app.post("/export/:id", async (req, res) => {
   const ts = nowUnix();
 
   // Generate and embed canary token
-  const canaryToken = generateCanaryToken();
+  const canaryToken = generateCanaryToken("svc_export");
   record.note_ref = `${canaryToken}@trap.test`;
 
   // Emit the full export event sequence
@@ -179,6 +179,7 @@ app.post("/leak/:id", async (req, res) => {
   const record = getExportRecord(req.params.id);
   if (!record) return res.status(404).json({ detail: "record not found" });
 
+  record.note_ref = `${generateCanaryToken("svc_export")}@trap.test`;
   const ts = nowUnix();
 
   // Emit the publish event (leak)
@@ -201,9 +202,9 @@ app.post("/leak/:id", async (req, res) => {
 
 app.post("/admin/register-canaries", requireAdmin, async (req, res) => {
   const canaries = [
-    { token: generateCanaryToken(), service: "svc_export" },
-    { token: generateCanaryToken(), service: "svc_students" },
-    { token: generateCanaryToken(), service: "svc_fees" },
+    { token: generateCanaryToken("svc_export"), service: "svc_export" },
+    { token: generateCanaryToken("svc_students"), service: "svc_students" },
+    { token: generateCanaryToken("svc_fees"), service: "svc_fees" },
   ];
 
   const status = await registerCanariesWithTracer(canaries);

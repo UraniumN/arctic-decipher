@@ -30,6 +30,11 @@ test("client module can be described", () => {
   assert(content.includes("investigate"), "Should have investigate method");
   assert(content.includes("verify"), "Should have verify method");
   assert(content.includes("reveal"), "Should have reveal method");
+  assert(content.includes("readStudent"), "Should have readStudent method");
+  assert(content.includes("readFees"), "Should have readFees method");
+  assert(content.includes("exportRecord"), "Should have exportRecord method");
+  assert(content.includes("simulateLeak"), "Should have simulateLeak method");
+  assert(content.includes("registerCanaries"), "Should have registerCanaries method");
 });
 
 test("graph module exists", () => {
@@ -50,6 +55,34 @@ test("main app module exists", () => {
   const content = fs.readFileSync(appPath, "utf-8");
   assert(content.includes("investigate"), "Should handle investigate");
   assert(content.includes("verifyChain"), "Should handle chain verification");
+  assert(!content.includes("runErpAction"), "Investigation app should not contain ERP actions");
+});
+
+test("ERP demo has a separate page and app", () => {
+  const fs = require("fs");
+  const path = require("path");
+  const erpPage = path.join(__dirname, "..", "src", "erp.html");
+  const erpApp = path.join(__dirname, "..", "src", "pages", "erp.js");
+  const investigationApp = path.join(__dirname, "..", "src", "pages", "app.js");
+  const investigationPage = path.join(__dirname, "..", "src", "index.html");
+  assert(fs.existsSync(erpPage), "ERP dashboard page should exist");
+  assert(fs.existsSync(erpApp), "ERP dashboard app should exist");
+  assert(
+    fs.readFileSync(investigationPage, "utf-8").includes('href="/erp.html"'),
+    "Investigation dashboard should link to ERP dashboard"
+  );
+  assert(
+    !fs.readFileSync(investigationPage, "utf-8").includes("ERP Demo Data"),
+    "ERP actions should not appear in investigation dashboard"
+  );
+  assert(
+    fs.readFileSync(erpApp, "utf-8").includes('localStorage.setItem("leaktrace.pending-investigation"'),
+    "Simulated leaks should be passed to the investigation dashboard"
+  );
+  assert(
+    fs.readFileSync(investigationApp, "utf-8").includes('localStorage.getItem("leaktrace.pending-investigation"'),
+    "Investigation dashboard should load pending simulated leak details"
+  );
 });
 
 console.log("\nAll dashboard tests completed.");
