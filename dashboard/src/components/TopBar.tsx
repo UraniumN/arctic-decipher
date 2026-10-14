@@ -47,12 +47,6 @@ export function TopBar({
       >
         <Search size={17} />
       </button>
-      <a
-        href="/erp.html"
-        className="flex h-11 items-center whitespace-nowrap rounded-full bg-surface px-5 text-[13px] font-semibold transition-colors duration-150 ease-out hover:bg-raised"
-      >
-        ERP Demo
-      </a>
 
       <div className="ml-auto flex items-center gap-5">
         <div className="flex h-11 items-center gap-2.5 rounded-full bg-surface pl-4 pr-5 shadow-sm">

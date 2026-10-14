@@ -65,7 +65,8 @@ test("investigation app consumes simulated leak handoff", () => {
   const app = read("src/App.tsx");
   assert.ok(app.includes('localStorage.getItem("leaktrace.pending-investigation"'));
   assert.ok(app.includes("setLeakedText(details.leakedText)"));
-  assert.ok(read("src/components/TopBar.tsx").includes('href="/erp.html"'));
+  assert.ok(!read("src/components/TopBar.tsx").includes('href="/erp.html"'));
+  assert.ok(read("erp.html").includes('href="/">Investigation</a>'));
   assert.ok(read("index.html").includes("/src/index.tsx"));
 });
 
