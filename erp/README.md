@@ -67,6 +67,24 @@ npm run dev
 
 Server starts on `http://localhost:3001`.
 
+### Standalone Part B demo
+
+The root-level `index.js` and `mock-tracer.js` provide the standalone ERP + mock tracer described in the Part B design documents. They are separate from the main ERP in `src/server.js`.
+
+Start the mock tracer in one terminal:
+
+```bash
+npm run mock-tracer
+```
+
+Start the standalone ERP in another terminal with `TRACER_URL=http://localhost:8000` and the required keys set:
+
+```bash
+npm run dev:standalone
+```
+
+The standalone ERP listens on port `3000`. The static demo dashboard is `dashboard/index.html`; the normal Vite dashboard remains under `dashboard/src/`.
+
 ---
 
 ## Testing

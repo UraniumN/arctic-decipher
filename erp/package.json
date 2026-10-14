@@ -5,6 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node src/server.js",
+    "dev:standalone": "node index.js",
+    "mock-tracer": "node mock-tracer.js",
     "start": "node src/server.js",
     "test": "node tests/test_erp.js"
   },
