@@ -56,7 +56,22 @@ Create a Postgres database and run:
 psql $DATABASE_URL -f tracer/schema.sql
 ```
 
-### 4. Start the Tracer
+### 4. Start All Services (One Command)
+
+From the project root:
+
+```bash
+npm run dev
+```
+
+This automatically orchestrates and starts all three services:
+- **Tracer**: `http://localhost:8000`
+- **ERP**: `http://localhost:3001`
+- **Dashboard**: `http://localhost:5173`
+
+Or start each service individually:
+
+### 5. Start the Tracer Individually
 
 ```bash
 cd tracer

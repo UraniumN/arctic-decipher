@@ -1,0 +1,15 @@
+{
+  "name": "leaktrace-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LeakTrace — Tamper-evident data leak provenance and investigation monorepo",
+  "scripts": {
+    "dev": "node scripts/start-all.js",
+    "start": "node scripts/start-all.js",
+    "dev:tracer": "python -m uvicorn app.main:app --app-dir tracer --port 8000 --reload",
+    "dev:erp": "npm --prefix erp run dev",
+    "dev:dashboard": "npm --prefix dashboard run dev",
+    "demo": "powershell -ExecutionPolicy Bypass -File scripts/demo/demo.ps1",
+    "test": "npm --prefix erp test && npm --prefix dashboard test && python -m pytest tracer/tests"
+  }
+}
