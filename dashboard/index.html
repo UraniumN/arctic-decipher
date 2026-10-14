@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LeakTrace Dashboard</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #111827;
+        --panel-alt: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #60a5fa;
+        --warn: #f59e0b;
+        --danger: #ef4444;
+        --ok: #10b981;
+        --border: rgba(148, 163, 184, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .layout {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      h1 { margin: 0; font-size: 2rem; }
+
+      .controls, .summary, .reasoning, .suspects, .integrity, .canary {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      input, textarea, button {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        background: var(--panel-alt);
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      button {
+        cursor: pointer;
+        background: var(--accent);
+        color: #04111d;
+        font-weight: bold;
+        border: none;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+      }
+
+      .card h3 {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .card strong {
+        font-size: 1.4rem;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.35fr 0.65fr;
+        gap: 20px;
+      }
+
+      #graph {
+        min-height: 420px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: linear-gradient(180deg, rgba(15,23,42,0.9), rgba(30,41,59,0.9));
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th, td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+      }
+
+      .meter {
+        height: 10px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .meter > span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #f59e0b, #ef4444);
+      }
+
+      .status-ok { color: var(--ok); }
+      .status-bad { color: var(--danger); }
+      .status-warn { color: var(--warn); }
+
+      .hidden { display: none; }
+      .error-box {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        color: #fecaca;
+        background: rgba(127, 29, 29, 0.35);
+        border: 1px solid rgba(248, 113, 113, 0.28);
+      }
+
+      @media (max-width: 860px){
+        .two-col { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="topbar">
+        <h1>LeakTrace Dashboard</h1>
+        <button id="toggle-custodian" type="button">Toggle Custodian View</button>
+      </div>
+
+      <div class="controls">
+        <label>
+          Tracer URL
+          <input id="tracer-url" value="http://localhost:8000" />
+        </label>
+        <label>
+          ERP URL
+          <input id="erp-url" value="http://localhost:3000" />
+        </label>
+        <label>
+          Read key
+          <input id="read-key" type="password" placeholder="Paste x-read-key" />
+        </label>
+        <label>
+          Admin key
+          <input id="admin-key" type="password" placeholder="Paste x-admin-key" />
+        </label>
+        <label>
+          Data ID
+          <input id="data-id" value="S1001" />
+        </label>
+        <label>
+          Exposure
+          <input id="exposure" value="public_bucket" />
+        </label>
+        <label style="grid-column: 1 / -1;">
+          Leaked text
+          <textarea id="leaked-text" placeholder="Paste the leaked JSON here">{ "student": "Asha Verma", "due": 12000, "note_ref": "tok_ab12cd@trap.test" }</textarea>
+        </label>
+        <div style="grid-column: 1 / -1;">
+          <button id="run-investigation" type="button">Run investigation</button>
+        </div>
+      </div>
+
+      <div id="error-box" class="error-box hidden"></div>
+
+      <div class="summary" id="summary"></div>
+
+      <div class="two-col">
+        <div class="controls" style="margin-bottom: 0;">
+          <div id="graph"></div>
+        </div>
+        <div>
+          <div class="canary" id="canary-card"></div>
+          <div class="integrity" id="integrity-card"></div>
+          <div class="reasoning" id="reasoning-card"></div>
+        </div>
+      </div>
+
+      <div class="suspects" id="suspect-panel"></div>
+    </div>
+
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+    <script>
+      const CFG = {
+        TRACER: 'http://localhost:8000',
+        ERP: 'http://localhost:3000',
+      };
+
+      const state = {
+        revealMap: {},
+        report: null,
+      };
+
+      const summaryEl = document.getElementById('summary');
+      const suspectPanel = document.getElementById('suspect-panel');
+      const canaryCard = document.getElementById('canary-card');
+      const integrityCard = document.getElementById('integrity-card');
+      const reasoningCard = document.getElementById('reasoning-card');
+      const errorBox = document.getElementById('error-box');
+
+      function showError(message) {
+        errorBox.textContent = message;
+        errorBox.classList.remove('hidden');
+      }
+
+      function hideError() {
+        errorBox.textContent = '';
+        errorBox.classList.add('hidden');
+      }
+
+      function safeText(value) {
+        return value == null ? '—' : String(value);
+      }
+
+      function realName(id) {
+        return state.revealMap[id] || id;
+      }
+
+      function updateSummary(report) {
+        summaryEl.innerHTML = '';
+        const topSuspect = report?.suspects?.[0] || { id: 'n/a', p: 0 };
+        const gapCount = report?.chain?.gaps?.length || 0;
+        const canaryOwner = report?.canary?.owner || 'No canary match';
+
+        const cards = [
+          ['Top suspect', `${topSuspect.id} (${(topSuspect.p * 100).toFixed(0)}%)`],
+          ['Integrity', gapCount === 0 ? 'Clean' : `${gapCount} gap(s)`],
+          ['Canary', canaryOwner],
+          ['Leak', report?.leak || 'n/a'],
+        ];
+
+        cards.forEach(([label, value]) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<h3>${label}</h3><strong>${safeText(value)}</strong>`;
+          summaryEl.appendChild(card);
+        });
+      }
+
+      function renderGraph(report) {
+        const graphHost = document.getElementById('graph');
+        graphHost.innerHTML = '';
+
+        const nodes = (report?.nodes || []).map((n) => ({
+          data: {
+            id: n.id,
+            label: n.id,
+            name: n.id,
+          },
+        }));
+
+        const edges = (report?.edges || []).map((e) => ({
+          data: {
+            source: e.s,
+            target: e.t,
+            inferred: e.inferred,
+            label: e.inferred ? 'inferred' : 'observed',
+          },
+        }));
+
+        const cy = cytoscape({
+          container: graphHost,
+          style: [
+            {
+              selector: 'node',
+              style: {
+                'background-color': '#60a5fa',
+                'label': 'data(label)',
+                'text-wrap': 'wrap',
+                'text-valign': 'center',
+                'color': '#e5e7eb',
+                'font-size': 14,
+                'width': 80,
+                'height': 36,
+                'border-width': 2,
+                'border-color': '#1f2937',
+              },
+            },
+            {
+              selector: 'edge',
+              style: {
+                'width': 3,
+                'line-color': (ele) => ele.data('inferred') ? '#f59e0b' : '#60a5fa',
+                'target-arrow-shape': 'triangle',
+                'line-style': (ele) => ele.data('inferred') ? 'dashed' : 'solid',
+                'curve-style': 'bezier',
+                'label': 'data(label)',
+                'font-size': 10,
+                'color': '#e5e7eb',
+              },
+            },
+          ],
+          elements: { nodes, edges },
+          layout: {
+            name: 'breadthfirst',
+            directed: true,
+            padding: 14,
+          },
+        });
+      }
+
+      function renderSuspects(report) {
+        suspectPanel.innerHTML = '';
+        if (!report?.suspects || !report.suspects.length) {
+          suspectPanel.innerHTML = '<p>No suspects reported.</p>';
+          return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Entity</th>
+              <th>Probability</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+        `;
+
+        const tbody = document.createElement('tbody');
+        report.suspects.forEach((suspect, index) => {
+          const row = document.createElement('tr');
+          const displayId = realName(suspect.id);
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${displayId}</td>
+            <td>
+              <div class="meter"><span style="width:${Math.max(8, (suspect.p || 0) * 100)}%"></span></div>
+              ${(suspect.p || 0).toFixed(2)}
+            </td>
+            <td>${suspect.why || 'No explanation'}</td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        suspectPanel.appendChild(table);
+      }
+
+      function renderCanary(report) {
+        const canaryMeta = report?.canary;
+        if (!canaryMeta) {
+          canaryCard.innerHTML = '<h3>Canary</h3><p>No token match in the leaked material.</p>';
+          return;
+        }
+        canaryCard.innerHTML = `
+          <h3>Canary</h3>
+          <p><strong>Token:</strong> ${canaryMeta.token}</p>
+          <p><strong>Owner:</strong> ${canaryMeta.owner}</p>
+        `;
+      }
+
+      function renderIntegrity(report) {
+        const chain = report?.chain || {};
+        const gaps = chain.gaps || [];
+        if (!gaps.length) {
+          integrityCard.innerHTML = '<h3>Evidence Integrity</h3><p class="status-ok">Chain is intact: no missing events.</p>';
+          return;
+        }
+
+        const gapSummary = gaps
+          .map((gap) => `after ${gap.after}, missing ${gap.missing}, between ${gap.between ? gap.between.join(' → ') : 'n/a'}`)
+          .join('<br>');
+
+        integrityCard.innerHTML = `
+          <h3>Evidence Integrity</h3>
+          <p class="status-warn">${gaps.length} integrity gap(s) detected.</p>
+          <p>${gapSummary}</p>
+        `;
+      }
+
+      function renderReasoning(report) {
+        const top = report?.suspects?.[0];
+        if (!top) {
+          reasoningCard.innerHTML = '<h3>Reasoning</h3><p>No reasoning available.</p>';
+          return;
+        }
+
+        reasoningCard.innerHTML = `
+          <h3>Reasoning</h3>
+          <p><strong>${realName(top.id)}</strong> ranked highest because:</p>
+          <p>${top.why || 'No explanation provided.'}</p>
+        `;
+      }
+
+      async function fetchJSON(url, headers, body) {
+        const response = await fetch(url, {
+          method: body ? 'POST' : 'GET',
+          headers,
+          body: body ? JSON.stringify(body) : undefined,
+        });
+
+        const text = await response.text();
+        let payload = null;
+        try { payload = text ? JSON.parse(text) : null; } catch (error) { payload = { detail: text || 'Unknown error' }; }
+
+        if (!response.ok) {
+          throw new Error(`${response.status} ${payload?.detail || payload?.error || text || 'Request failed'}`);
+        }
+
+        return payload;
+      }
+
+      async function loadRevealMap() {
+        const adminKey = document.getElementById('admin-key').value.trim();
+        if (!adminKey) return;
+
+        try {
+          const map = await fetchJSON(
+            `${document.getElementById('erp-url').value}/custodian/reveal`,
+            { 'x-admin-key': adminKey },
+            null
+          );
+          state.revealMap = map || {};
+        } catch (error) {
+          console.warn('Reveal map unavailable', error.message);
+        }
+      }
+
+      async function runInvestigation() {
+        hideError();
+        const tracerUrl = document.getElementById('tracer-url').value.trim();
+        const readKey = document.getElementById('read-key').value.trim();
+        const dataId = document.getElementById('data-id').value.trim();
+        const exposure = document.getElementById('exposure').value.trim();
+        const leakedText = document.getElementById('leaked-text').value.trim();
+
+        if (!readKey) {
+          showError('Read key is required.');
+          return;
+        }
+
+        try {
+          const report = await fetchJSON(
+            `${tracerUrl}/investigate`,
+            {
+              'content-type': 'application/json',
+              'x-read-key': readKey,
+            },
+            {
+              data_id: dataId,
+              exposure,
+              leaked_text: leakedText,
+              tau: 600,
+            }
+          );
+
+          state.report = report;
+          updateSummary(report);
+          renderGraph(report);
+          renderSuspects(report);
+          renderCanary(report);
+          renderIntegrity(report);
+          renderReasoning(report);
+          await loadRevealMap();
+          renderSuspects(report);
+          renderReasoning(report);
+        } catch (error) {
+          showError(`Investigation failed: ${error.message}`);
+        }
+      }
+
+      document.getElementById('run-investigation').addEventListener('click', runInvestigation);
+      document.getElementById('toggle-custodian').addEventListener('click', async () => {
+        await loadRevealMap();
+        if (state.report) {
+          renderSuspects(state.report);
+          renderReasoning(state.report);
+        }
+      });
+
+      const tracerUrl = document.getElementById('tracer-url');
+      const erpUrl = document.getElementById('erp-url');
+      tracerUrl.value = CFG.TRACER;
+      erpUrl.value = CFG.ERP;
+
+      const sample = {
+        case: 'S1001 found at public_bucket',
+        leak: 'public_bucket',
+        chain: { events: 4, gaps: [], edited_seqs: [] },
+        canary: { token: 'tok_ab12cd', owner: 'svc_export' },
+        nodes: [{ id: 'svc_students' }, { id: 'svc_fees' }, { id: 'svc_export' }, { id: 'public_bucket' }],
+        edges: [
+          { s: 'svc_students', t: 'svc_export', inferred: false },
+          { s: 'svc_fees', t: 'svc_export', inferred: true },
+          { s: 'svc_export', t: 'public_bucket', inferred: false },
+        ],
+        suspects: [
+          { id: 'svc_export', p: 0.74, why: 'Handled the record shortly before the leak and matched the canary token.' },
+          { id: 'svc_fees', p: 0.2, why: 'Data passed through this service before export.' },
+          { id: 'svc_students', p: 0.06, why: 'The service handled the record but is less likely.' },
+        ],
+      };
+
+      state.report = sample;
+      updateSummary(sample);
+      renderGraph(sample);
+      renderSuspects(sample);
+      renderCanary(sample);
+      renderIntegrity(sample);
+      renderReasoning(sample);
+    </script>
+  </body>
+</html>
