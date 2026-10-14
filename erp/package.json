@@ -1,0 +1,19 @@
+{
+  "name": "leaktrace-erp",
+  "version": "1.0.0",
+  "description": "LeakTrace ERP — fake student/fee data with pseudonymization and event emission",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "test": "node tests/test_erp.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "cors": "^2.8.5",
+    "@vercel/functions": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

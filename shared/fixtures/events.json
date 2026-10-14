@@ -1,0 +1,41 @@
+{
+  "description": "Example event batch for the export-then-leak flow of S1001",
+  "events": [
+    {
+      "event_id": "0b1d6f2e-3c4a-4b7e-9d1f-2a5c8e7f9a10",
+      "ts": 1760452320,
+      "actor": "p_a3f9c2d1e4",
+      "action": "request",
+      "target": "svc_export",
+      "data_id": "S1001",
+      "status": 200
+    },
+    {
+      "event_id": "1c2e7f3a-4d5b-6c8e-0a2f-3b6d9e0f1a23",
+      "ts": 1760452321,
+      "actor": "svc_students",
+      "action": "transfer",
+      "target": "svc_export",
+      "data_id": "S1001",
+      "status": 200
+    },
+    {
+      "event_id": "2d3f8a4b-5e6c-7d9f-1b3a-4c7e0f1a2b34",
+      "ts": 1760452321,
+      "actor": "svc_fees",
+      "action": "transfer",
+      "target": "svc_export",
+      "data_id": "S1001",
+      "status": 200
+    },
+    {
+      "event_id": "3e4a9b5c-6f7d-8e0a-2c4b-5d8f1a2b3c45",
+      "ts": 1760452322,
+      "actor": "svc_export",
+      "action": "publish",
+      "target": "public_bucket",
+      "data_id": "S1001",
+      "status": 200
+    }
+  ]
+}

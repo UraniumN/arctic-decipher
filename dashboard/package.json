@@ -1,0 +1,14 @@
+{
+  "name": "leaktrace-dashboard",
+  "version": "1.0.0",
+  "description": "LeakTrace Dashboard — interactive leak investigation UI",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node tests/test_client.js"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

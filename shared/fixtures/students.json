@@ -1,0 +1,18 @@
+{
+  "S1001": {
+    "id": "S1001",
+    "name": "Alice Nguyen",
+    "programme": "BSc Computer Science",
+    "year": 3,
+    "gpa": 3.72,
+    "note_ref": null
+  },
+  "S1002": {
+    "id": "S1002",
+    "name": "Bob Martinez",
+    "programme": "BA Economics",
+    "year": 2,
+    "gpa": 3.45,
+    "note_ref": null
+  }
+}
