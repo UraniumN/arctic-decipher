@@ -19,7 +19,7 @@ const { generateCanaryToken } = require("./services/canary");
 const app = express();
 app.use(express.json());
 
-const ADMIN_KEY = process.env.ADMIN_KEY;
+const ADMIN_KEY = process.env.ADMIN_KEY || "ak";
 const DASHBOARD_ORIGIN = process.env.DASHBOARD_ORIGIN || "http://localhost:5173";
 
 // CORS configuration

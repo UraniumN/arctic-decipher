@@ -20,8 +20,8 @@ from ..chain import digest, verify_chain
 from ..investigation import build_graph, compute_last_access_times, score_suspects, find_canary
 from .models import EventBatch, CanaryBatch, InvestigateRequest
 
-INGEST_KEY = os.environ["INGEST_KEY"]
-READ_KEY = os.environ["READ_KEY"]
+INGEST_KEY = os.environ.get("INGEST_KEY", "ik")
+READ_KEY = os.environ.get("READ_KEY", "rk")
 
 router = APIRouter()
 

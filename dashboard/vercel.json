@@ -1,14 +1,9 @@
 {
-  "builds": [
+  "framework": "vite",
+  "rewrites": [
     {
-      "src": "src/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/src/$1"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
